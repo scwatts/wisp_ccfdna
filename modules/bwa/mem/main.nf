@@ -15,25 +15,28 @@ process BWA_MEM {
   """
   # TODO(SW): profile processes to assign appropriate CPU allocation, allow potential thrashing for now
 
-  find ${refgenome_bwa_index} ! -type d -exec ln -s {} ./ \;
+  ln -s \$(find -L ${refgenome_bwa_index} -type f) ./
 
   bwa mem \\
-    -t ${task.cpus} \\
-    -R '@RG\tID:${meta.id}\tSM:${meta.sample_id}' \\
-    -K 100000000 \\
     -Y \\
+    -R '@RG\\tID:${meta.id}\\tSM:${meta.sample_id}' \\
+    -K 100000000 \\
+    -t ${task.cpus} \\
+    ${refgenome_fasta} \\
     ${reads_fwd} \\
     ${reads_rev} | \\
     \\
-    sambamba view | \\
+    sambamba view \\
       --sam-input \\
       --format bam \\
       --compression-level 0 \\
-      --nthreads ${task.cpus} | \\
+      --nthreads ${task.cpus} \\
+      /dev/stdin | \\
     \\
     sambamba sort \\
       --nthreads ${task.cpus} \\
-      --out ${meta.id}.${meta.split}.bam
+      --out ${meta.id}.${meta.split}.bam \\
+      /dev/stdin
   """
 
   stub:

@@ -11,8 +11,8 @@ fizz,buzz,001,s3://bucket/fizz_L001_R1_001.fastq.gz,s3://bucket/fizz_L001_R2_001
 EOF
 
 nextflow run main.nf \
-  --input samplesheet.csv \
+  -work-dir s3://bucket/work/ \
   --refgenome_fasta s3://bucket/GRCh38.fasta \
   --refgenome_bwa_index s3://bucket/GRCh38/bwa_index/ \
-  --outdir output/
+  --outdir s3://bucket/output/
 ```
