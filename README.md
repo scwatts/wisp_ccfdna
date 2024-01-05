@@ -3,7 +3,7 @@
 A rigid workflow to serve a single purpose in one specific environment
 
 ```bash
-cat <<EOF
+cat <<EOF > samplesheet.csv
 sample_id,library_id,lane,reads_fwd,reads_rev
 foo,bar,001,s3://bucket/foo_L001_R1_001.fastq.gz,s3://bucket/foo_L001_R2_001.fastq.gz
 foo,bar,002,s3://bucket/foo_L002_R1_001.fastq.gz,s3://bucket/foo_L002_R2_001.fastq.gz
