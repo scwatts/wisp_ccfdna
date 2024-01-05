@@ -1,0 +1,51 @@
+plugins {
+  id 'nf-amazon'
+}
+
+fusion {
+  enabled = true
+}
+
+wave {
+  enabled = true
+}
+
+aws {
+  batch {
+    jobRole = '__BATCH_INSTANCE_ROLE__'
+    volumes = '/mnt/local_ephemeral/:/tmp/'
+  }
+}
+
+docker {
+  runOptions = '--network host'
+}
+
+process {
+  executor = 'awsbatch'
+  scratch = false
+
+  withName: 'FASTP' {
+    queue = 'nextflow-task-ondemand-4cpu_16gb-nvme_ssd'
+    cpus = 4
+    memory = 14.GB
+  }
+
+  withName: 'BWA_MEM' {
+    queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
+    cpus = 8
+    memory = 30.GB
+  }
+
+  withName: 'SAMBAMBA_MERGE' {
+    queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
+    cpus = 8
+    memory = 30.GB
+  }
+
+  withName: 'SAMBAMBA_INDEX' {
+    queue = 'nextflow-task-ondemand-4cpu_16gb-nvme_ssd'
+    cpus = 4
+    memory = 14.GB
+  }
+}
