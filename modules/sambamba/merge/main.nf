@@ -13,12 +13,12 @@ process SAMBAMBA_MERGE {
   """
   sambamba merge \\
     --nthreads ${task.cpus} \\
-    ${meta.id}.bam \\
+    ${meta.sample_id}.bam \\
     ${bams}
   """
 
   stub:
   """
-  touch ${meta.id}.bam
+  touch ${meta.sample_id}.bam
   """
 }

@@ -5,8 +5,8 @@ process BWA_MEM {
 
   input:
   tuple val(meta), path(reads_fwd), path(reads_rev)
-  path refgenome_fasta
-  path refgenome_bwa_index
+  path genome_fasta
+  path genome_bwa_index
 
   output:
   tuple val(meta), path('*bam'), emit: bam
@@ -15,14 +15,14 @@ process BWA_MEM {
   """
   # TODO(SW): profile processes to assign appropriate CPU allocation, allow potential thrashing for now
 
-  ln -s \$(find -L ${refgenome_bwa_index} -type f) ./
+  ln -s \$(find -L ${genome_bwa_index} -type f) ./
 
   bwa mem \\
     -Y \\
     -R '@RG\\tID:${meta.id}\\tSM:${meta.sample_id}' \\
     -K 100000000 \\
     -t ${task.cpus} \\
-    ${refgenome_fasta} \\
+    ${genome_fasta} \\
     ${reads_fwd} \\
     ${reads_rev} | \\
     \\
@@ -35,12 +35,12 @@ process BWA_MEM {
     \\
     sambamba sort \\
       --nthreads ${task.cpus} \\
-      --out ${meta.id}.${meta.split}.bam \\
+      --out ${meta.sample_id}.${meta.lane}.${meta.split}.bam \\
       /dev/stdin
   """
 
   stub:
   """
-  touch ${meta.id}.${meta.split}.bam
+  touch ${meta.sample_id}.${meta.lane}.${meta.split}.bam
   """
 }

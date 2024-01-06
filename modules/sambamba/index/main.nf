@@ -7,17 +7,17 @@ process SAMBAMBA_INDEX {
   tuple val(meta), path(bam)
 
   output:
-  path('*bai')
+  tuple val(meta), path('*bai'), emit: bai
 
   script:
   """
   sambamba index \\
     --nthreads ${task.cpus} \\
-    ${meta.id}.bam
+    ${meta.sample_id}.bam
   """
 
   stub:
   """
-  touch ${meta.id}.bam.bai
+  touch ${meta.sample_id}.bam.bai
   """
 }

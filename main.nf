@@ -1,99 +1,72 @@
-include { BWA_MEM        } from './modules/bwa/mem/main'
-include { FASTP          } from './modules/fastp/main'
-include { SAMBAMBA_INDEX } from './modules/sambamba/index/main'
-include { SAMBAMBA_MERGE } from './modules/sambamba/merge/main'
+include { ALIGNMENT }     from './subworkflows/alignment.nf'
+include { PREPARE_INPUTS } from './subworkflows/prepare_inputs.nf'
+include { WISP_ANALYSIS } from './subworkflows/wisp_analysis.nf'
 
 
 workflow {
 
-  ch_input = Channel.fromPath(params.input)
-    .splitCsv(header: true)
-    .map { d ->
-      [
-        id: "${d.sample_id}_${d.library_id}_${d.lane}",
-        *:d,
-      ]
-    }
+  // channel:           [ meta ]
+  // meta:              [ patient_id: str, oncoanalyser: meta_oncoanalyser, fastq: [ meta_fastq, ... ], bam: meta_bam ]
+  // meta_oncoanalyser: [ patient_id: str, sample_id: str, path: str]
+  // meta_fastq:        [ patient_id: str, sample_id: str, library_id: str, lane: str, id: str, reads_fwd: str, reads_rev: str ]
+  // meta_bam:          [ patient_id: str, sample_id: str, bam: str, bai: str ]
+  PREPARE_INPUTS()
+  ch_inputs = PREPARE_INPUTS.out.inputs
 
 
-  ch_fastp_inputs = ch_input
-    .map { meta ->
-      return [meta, file(meta.reads_fwd), file(meta.reads_rev)]
-    }
+  ch_bam = Channel.empty()
+  if (!params.alignment_skip) {
 
-  FASTP(
-    ch_fastp_inputs,
-  )
-
-
-  ch_bwa_mem_inputs = FASTP.out.fastq
-    .flatMap { meta, reads_fwd, reads_rev ->
-
-      def data = [reads_fwd, reads_rev]
-        .transpose()
-        .collect { fwd, rev ->
-
-          def split_fwd = fwd.name.replaceAll('\\..+$', '')
-          def split_rev = rev.name.replaceAll('\\..+$', '')
-
-          assert split_fwd == split_rev
-
-          def meta_split = [
-            *:meta,
-            split: split_fwd,
-          ]
-
-          return [meta_split, fwd, rev]
-        }
-
-      return data
-    }
-
-  BWA_MEM(
-    ch_bwa_mem_inputs,
-    file(params.refgenome_fasta),
-    file(params.refgenome_bwa_index),
-  )
-
-
-  // Here we block until all sample BAMs are complete so that we can merge into a single BAM
-  // Hence, it is safe now to calculate FASTQ splits for a sample across all lanes
-  ch_sample_fastq_counts = FASTP.out.fastq
-    .map { meta, reads_fwd, reads_rev ->
-
-      def fwd_count = reads_fwd.size()
-      def rev_count = reads_rev.size()
-
-      assert fwd_count == rev_count
-
-      return [meta.sample_id, fwd_count]
-    }
-    .groupTuple()
-    .map { sample_id, counts ->
-      return [sample_id, counts.sum()]
-    }
-
-  // Add sample FASTQ counts to each split BAM so that we can group without blocking other samples
-  ch_sambamba_merge_inputs = ch_sample_fastq_counts
-    .cross(
-      BWA_MEM.out.bam.map { meta, bam -> return [meta.sample_id, bam] }
+    // channel: [sample_id, bam, bai ]
+    ch_alignment_inputs = ch_inputs.flatMap { meta -> meta['fastq'] }
+    ALIGNMENT(
+      ch_alignment_inputs,
+      file(params.genome_fasta),
+      file(params.genome_bwa_index),
     )
-    .map { count_tuple, bam_tuple ->
-      def n = count_tuple[1]
-      def (sample_id, bam) = bam_tuple
 
-      def meta = [id: sample_id]
+    ch_bam = ALIGNMENT.out.bam
 
-      return tuple(groupKey(meta, n), bam)
+  } else {
+
+    ch_bam = ch_inputs
+      .map { meta ->
+        def meta_bam = meta['bam']
+        return [meta_bam, file(meta_bam['bam']), file(meta_bam['bai'])]
+      }
+
+  }
+
+
+
+
+  // TODO(SW): see whether we need the BAI
+
+
+
+
+  ch_wisp_inputs = WorkflowMain.groupByMeta(
+      ch_inputs.map { meta -> [meta['patient_id'], meta['oncoanalyser']] },
+      ch_bam.map { meta, bam, bai -> [meta['patient_id'], [meta, bam, bai]] },
+  )
+    .map { patient_id, meta_oncoanalyser, meta_bam, bam, bai ->
+      def meta_wisp = [
+        id: "${meta_bam.patient_id}_${meta_bam.sample_id}",
+        patient_id: meta_bam.patient_id,
+        sample_id: meta_bam.sample_id,
+        primary_tumor_id: meta_oncoanalyser.sample_id,
+      ]
+      return [meta_wisp, file(meta_oncoanalyser['path']), bam, bai]
     }
-    .groupTuple()
 
-  SAMBAMBA_MERGE(
-    ch_sambamba_merge_inputs,
+  WISP_ANALYSIS(
+    ch_wisp_inputs,
+    file(params.genome_fasta),
+    file(params.genome_fai),
+    file(params.genome_dict),
+    file(params.refdata_unmap_regions),
+    file(params.refdata_gc_profile),
+    file(params.refdata_diploid_regions),
   )
 
-
-  SAMBAMBA_INDEX(
-    SAMBAMBA_MERGE.out.bam,
-  )
 }

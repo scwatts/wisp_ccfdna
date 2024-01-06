@@ -26,9 +26,9 @@ process {
   scratch = false
 
   withName: 'FASTP' {
-    queue = 'nextflow-task-ondemand-4cpu_16gb-nvme_ssd'
-    cpus = 4
-    memory = 14.GB
+    queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
+    cpus = 8
+    memory = 30.GB
   }
 
   withName: 'BWA_MEM' {
@@ -44,6 +44,30 @@ process {
   }
 
   withName: 'SAMBAMBA_INDEX' {
+    queue = 'nextflow-task-ondemand-4cpu_16gb-nvme_ssd'
+    cpus = 4
+    memory = 14.GB
+  }
+
+  withName: 'COBALT' {
+    queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
+    cpus = 8
+    memory = 30.GB
+  }
+
+  withName: 'MARKDUPS' {
+    queue = 'nextflow-task-ondemand-16cpu_32gb-nvme_ssd'
+    cpus = 16
+    memory = 30.GB
+  }
+
+  withName: 'SAGE_APPEND' {
+    queue = 'nextflow-task-ondemand-4cpu_16gb-nvme_ssd'
+    cpus = 4
+    memory = 14.GB
+  }
+
+  withName: 'WISP' {
     queue = 'nextflow-task-ondemand-4cpu_16gb-nvme_ssd'
     cpus = 4
     memory = 14.GB
