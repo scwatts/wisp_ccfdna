@@ -56,8 +56,8 @@ process {
   }
 
   withName: 'MARKDUPS' {
-    queue = 'nextflow-task-ondemand-16cpu_32gb-nvme_ssd'
-    cpus = 16
+    queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
+    cpus = 8
     memory = 30.GB
   }
 

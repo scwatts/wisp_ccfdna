@@ -4,7 +4,7 @@ workflow PREPARE_INPUTS {
     // meta:              [ patient_id: str, oncoanalyser: meta_oncoanalyser, fastq: [ meta_fastq, ... ], bam: meta_bam ]
     // meta_oncoanalyser: [ patient_id: str, sample_id: str, path: str]
     // meta_fastq:        [ patient_id: str, sample_id: str, library_id: str, lane: str, id: str, reads_fwd: str, reads_rev: str ]
-    // meta_bam:          [ patient_id: str, sample_id: str, bam: str, bai: str ]
+    // meta_bam:          [ patient_id: str, sample_id: str, bam: str ]
     ch_inputs = Channel.fromPath(params.input)
       .splitCsv(header: true)
       .map { d ->
@@ -48,7 +48,6 @@ workflow PREPARE_INPUTS {
           } else if (d['filetype'] == 'bam') {
 
             meta_input['bam'] = d['filepaths']
-            meta_input['bai'] = file(meta_input['bam']).toUriString() + '.bai'
 
             meta['bam'] = meta_input
 

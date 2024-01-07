@@ -11,8 +11,9 @@ process SAGE_APPEND {
 
   output:
   tuple val(meta), path('*vcf.gz'), emit: vcf
-  path '*.frag_lengths.tsv.gz'
+  path '*.vcf.gz.tbi'
   path '*.sage.bqr.tsv'
+  path '*.frag_lengths.tsv.gz'
 
   script:
   """
@@ -35,6 +36,9 @@ process SAGE_APPEND {
   stub:
   """
   touch ${meta.sample_id}.purple.somatic.vcf.gz
+  touch ${meta.sample_id}.vcf.gz.tbi
+  touch ${meta.sample_id}.sage.bqr.tsv
+  touch ${meta.sample_id}.frag_lengths.tsv.gz
   """
 }
 

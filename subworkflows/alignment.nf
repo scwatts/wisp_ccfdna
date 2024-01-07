@@ -73,6 +73,7 @@ workflow ALIGNMENT {
         return [meta_count, counts.sum()]
       }
 
+
     // Add sample FASTQ counts to each split BAM so that we can group without blocking other samples
     ch_sambamba_merge_inputs = ch_sample_fastq_counts
       .cross(
@@ -100,12 +101,6 @@ workflow ALIGNMENT {
       SAMBAMBA_MERGE.out.bam,
     )
 
-
-    ch_bams = WorkflowMain.groupByMeta(
-      SAMBAMBA_MERGE.out.bam,
-      SAMBAMBA_INDEX.out.bai,
-    )
-
   emit:
-    bam = ch_bams
+    bam = SAMBAMBA_MERGE.out.bam
 }

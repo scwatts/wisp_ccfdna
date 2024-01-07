@@ -6,7 +6,7 @@ include { WISP        } from '../modules/wisp/main'
 
 workflow WISP_ANALYSIS {
   take:
-    ch_inputs         // channel: [meta_wisp, oncoanalyser_dir, bam, bai]
+    ch_inputs         // channel: [meta_wisp, oncoanalyser_dir, bam]
     genome_fasta
     genome_fai
     genome_dict
@@ -17,7 +17,7 @@ workflow WISP_ANALYSIS {
   main:
 
     ch_markdups_inputs = ch_inputs
-      .map { meta, oncoanalyser_dir, bam, bai ->
+      .map { meta, oncoanalyser_dir, bam ->
         return [meta, bam]
       }
 
@@ -30,14 +30,6 @@ workflow WISP_ANALYSIS {
     )
 
 
-
-
-    // TODO(SW): check whether using normal BAM here helps with accuracy; CS did suggest to use it here out of
-    // convenience in notes
-
-
-
-
     COBALT(
       MARKDUPS.out.bam,
       gc_profile,
@@ -46,7 +38,7 @@ workflow WISP_ANALYSIS {
 
 
     ch_sage_append_inputs = WorkflowMain.groupByMeta(
-      ch_inputs.map { meta, oncoanalyser_dir, bam, bai -> [meta, oncoanalyser_dir] },
+      ch_inputs.map { meta, oncoanalyser_dir, bam -> [meta, oncoanalyser_dir] },
       MARKDUPS.out.bam,
     )
       .map { meta, oncoanalyser_dir, bam ->
@@ -67,7 +59,7 @@ workflow WISP_ANALYSIS {
     ch_wisp_inputs = WorkflowMain.groupByMeta(
       SAGE_APPEND.out.vcf,
       COBALT.out.cobalt_dir,
-      ch_inputs.map { meta, oncoanalyser_dir, bam, bai -> [meta, oncoanalyser_dir] },
+      ch_inputs.map { meta, oncoanalyser_dir, bam -> [meta, oncoanalyser_dir] },
     )
       .map { meta, vcf, cobalt_dir, oncoanalyser_dir ->
         def purple_dir = file(oncoanalyser_dir).toUriString() + '/purple/'

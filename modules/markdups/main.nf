@@ -48,5 +48,10 @@ process MARKDUPS {
   stub:
   """
   touch ${meta.sample_id}.mark_dups.bam
+  touch ${meta.sample_id}.duplicate_freq.tsv
+  touch ${meta.sample_id}.reads.tsv
+  touch ${meta.sample_id}.umi_coord_freq.tsv
+  touch ${meta.sample_id}.umi_edit_distance.tsv
+  touch ${meta.sample_id}.umi_nucleotide_freq.tsv
   """
 }

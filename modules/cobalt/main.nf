@@ -9,7 +9,7 @@ process COBALT {
   path diploid_bed
 
   output:
-  tuple val(meta), path('output'), emit: cobalt_dir
+  tuple val(meta), path('cobalt'), emit: cobalt_dir
 
   script:
   """
@@ -24,11 +24,11 @@ process COBALT {
       \\
       -threads ${task.cpus} \\
       \\
-      -output_dir output/
+      -output_dir cobalt/
   """
 
   stub:
   """
-  mkdir -p output/
+  mkdir -p cobalt/
   """
 }

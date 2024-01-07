@@ -38,6 +38,12 @@ process WISP {
   stub:
   """
   mkdir -p wisp/
-  touch wisp/hello
+  touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.cn_plot_calcs.tsv
+  touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.cn_segments.tsv
+  touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.somatic_peak.tsv
+  touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.somatic_variants.tsv
+  touch wisp/${meta.patient_id}_${meta.sample_id}.wisp.summary.tsv
+  touch wisp/${meta.sample_id}.cn_gc_ratio_fit.png
+  touch wisp/${meta.sample_id}.somatic_vaf.png
   """
 }
