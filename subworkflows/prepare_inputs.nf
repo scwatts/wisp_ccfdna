@@ -1,11 +1,14 @@
 workflow PREPARE_INPUTS {
+  take:
+    ch_samplesheet_fp // val: samplesheet filepath
+
   main:
     // channel:           [ meta ]
     // meta:              [ patient_id: str, oncoanalyser: meta_oncoanalyser, fastq: [ meta_fastq, ... ], bam: meta_bam ]
     // meta_oncoanalyser: [ patient_id: str, sample_id: str, path: str]
     // meta_fastq:        [ patient_id: str, sample_id: str, library_id: str, lane: str, id: str, reads_fwd: str, reads_rev: str ]
     // meta_bam:          [ patient_id: str, sample_id: str, bam: str ]
-    ch_inputs = Channel.fromPath(params.input)
+    ch_inputs = Channel.fromPath(ch_samplesheet_fp)
       .splitCsv(header: true)
       .map { d ->
         return [d['patient_id'], d]

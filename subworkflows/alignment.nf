@@ -1,7 +1,9 @@
-include { BWA_MEM        } from '../modules/bwa/mem/main'
-include { FASTP          } from '../modules/fastp/main'
-include { SAMBAMBA_INDEX } from '../modules/sambamba/index/main'
-include { SAMBAMBA_MERGE } from '../modules/sambamba/merge/main'
+include { BWA_MEM           } from '../modules/bwa/mem/main'
+include { FASTP             } from '../modules/fastp/main'
+include { SAMBAMBA_FLAGSTAT } from '../modules/sambamba/flagstat/main'
+include { SAMBAMBA_INDEX    } from '../modules/sambamba/index/main'
+include { SAMBAMBA_MERGE    } from '../modules/sambamba/merge/main'
+include { SAMTOOLS_STATS    } from '../modules/samtools/stats/main'
 
 
 workflow ALIGNMENT {
@@ -98,6 +100,16 @@ workflow ALIGNMENT {
 
 
     SAMBAMBA_INDEX(
+      SAMBAMBA_MERGE.out.bam,
+    )
+
+
+    SAMBAMBA_FLAGSTAT(
+      SAMBAMBA_MERGE.out.bam,
+    )
+
+
+    SAMTOOLS_STATS(
       SAMBAMBA_MERGE.out.bam,
     )
 

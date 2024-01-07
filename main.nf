@@ -10,7 +10,9 @@ workflow {
   // meta_oncoanalyser: [ patient_id: str, sample_id: str, path: str]
   // meta_fastq:        [ patient_id: str, sample_id: str, library_id: str, lane: str, id: str, reads_fwd: str, reads_rev: str ]
   // meta_bam:          [ patient_id: str, sample_id: str, bam: str ]
-  PREPARE_INPUTS()
+  PREPARE_INPUTS(
+    params.input,
+  )
   ch_inputs = PREPARE_INPUTS.out.inputs
 
 

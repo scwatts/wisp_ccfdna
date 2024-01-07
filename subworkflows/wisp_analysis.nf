@@ -1,12 +1,12 @@
-include { COBALT      } from '../modules/cobalt/main'
-include { MARKDUPS    } from '../modules/markdups/main'
-include { SAGE_APPEND } from '../modules/sage/append/main'
-include { WISP        } from '../modules/wisp/main'
+include { COBALT            } from '../modules/cobalt/main'
+include { MARKDUPS          } from '../modules/markdups/main'
+include { SAGE_APPEND       } from '../modules/sage/append/main'
+include { WISP              } from '../modules/wisp/main'
 
 
 workflow WISP_ANALYSIS {
   take:
-    ch_inputs         // channel: [meta_wisp, oncoanalyser_dir, bam]
+    ch_inputs     // channel: [meta_wisp, oncoanalyser_dir, bam]
     genome_fasta
     genome_fai
     genome_dict
