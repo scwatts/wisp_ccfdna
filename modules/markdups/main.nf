@@ -37,7 +37,6 @@ process MARKDUPS {
       -ref_genome ${genome_fasta} \\
       -ref_genome_version 38 \\
       \\
-      -read_output ALL \\
       -write_stats \\
       -log_debug \\
       -threads 16 \\
@@ -49,7 +48,6 @@ process MARKDUPS {
   """
   touch ${meta.sample_id}.mark_dups.bam
   touch ${meta.sample_id}.duplicate_freq.tsv
-  touch ${meta.sample_id}.reads.tsv
   touch ${meta.sample_id}.umi_coord_freq.tsv
   touch ${meta.sample_id}.umi_edit_distance.tsv
   touch ${meta.sample_id}.umi_nucleotide_freq.tsv

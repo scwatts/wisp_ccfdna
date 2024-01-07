@@ -49,13 +49,13 @@ process {
     memory = 14.GB
   }
 
-  withName: 'COBALT' {
+  withName: 'MARKDUPS' {
     queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
     cpus = 8
     memory = 30.GB
   }
 
-  withName: 'MARKDUPS' {
+  withName: 'COBALT' {
     queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
     cpus = 8
     memory = 30.GB
