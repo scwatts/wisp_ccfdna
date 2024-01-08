@@ -50,15 +50,15 @@ process {
   }
 
   withName: 'SAMBAMBA_FLAGSTAT' {
-    queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
-    cpus = 8
-    memory = 30.GB
+    queue = 'nextflow-task-ondemand-4cpu_16gb-nvme_ssd'
+    cpus = 4
+    memory = 14.GB
   }
 
   withName: 'SAMTOOLS_STATS' {
-    queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
-    cpus = 8
-    memory = 30.GB
+    queue = 'nextflow-task-ondemand-2cpu_16gb-nvme_ssd'
+    cpus = 2
+    memory = 14.GB
   }
 
   withName: 'MARKDUPS' {
