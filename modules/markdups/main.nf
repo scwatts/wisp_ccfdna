@@ -38,7 +38,6 @@ process MARKDUPS {
       -ref_genome_version 38 \\
       \\
       -write_stats \\
-      -log_debug \\
       -threads 16 \\
       \\
       -output_bam ${meta.sample_id}.mark_dups.bam
