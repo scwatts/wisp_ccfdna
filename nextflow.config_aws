@@ -15,6 +15,11 @@ aws {
     jobRole = '__BATCH_INSTANCE_ROLE__'
     volumes = '/mnt/local_ephemeral/:/tmp/'
   }
+
+  client {
+    uploadMaxThreads = 5
+    uploadChunkSize = '100MB'
+  }
 }
 
 docker {
