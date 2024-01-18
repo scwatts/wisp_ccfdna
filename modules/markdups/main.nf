@@ -12,6 +12,7 @@ process MARKDUPS {
 
   output:
   tuple val(meta), path('*bam'), emit: bam
+  path '*.bai'
   path '*.tsv'
 
   script:
