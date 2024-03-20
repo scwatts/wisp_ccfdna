@@ -1,18 +1,17 @@
 process MARKDUPS {
   tag "${meta.id}"
 
-  container 'docker.io/scwatts/markdups:1.1.rc1'
+  container 'docker.io/scwatts/markdups:1.1.2'
 
   input:
-  tuple val(meta), path(bam)
+  tuple val(meta), path(bams), path(bais)
   path genome_fasta
   path genome_fai
   path genome_dict
   path unmap_regions
 
   output:
-  tuple val(meta), path('*bam'), emit: bam
-  path '*.bai'
+  tuple val(meta), path('*bam'), path('*bai'), emit: bam
   path '*.tsv'
 
   script:
@@ -25,10 +24,9 @@ process MARKDUPS {
       -sambamba \$(which sambamba) \\
       \\
       -sample ${meta.sample_id} \\
-      -input_bam ${bam} \\
+      -input_bam ${bams.join(',')} \\
       \\
       -form_consensus \\
-      -multi_bam \\
       -umi_enabled \\
       -umi_duplex \\
       -umi_duplex_delim _ \\
@@ -36,17 +34,18 @@ process MARKDUPS {
       \\
       -unmap_regions ${unmap_regions} \\
       -ref_genome ${genome_fasta} \\
-      -ref_genome_version 38 \\
+      -ref_genome_version ${genome_ver} \\
       \\
       -write_stats \\
-      -threads 16 \\
+      -threads ${task.cpus} \\
       \\
-      -output_bam ${meta.sample_id}.mark_dups.bam
+      -output_bam ${meta.sample_id}.bam
   """
 
   stub:
   """
-  touch ${meta.sample_id}.mark_dups.bam
+  touch ${meta.sample_id}.bam
+  touch ${meta.sample_id}.bai
   touch ${meta.sample_id}.duplicate_freq.tsv
   touch ${meta.sample_id}.umi_coord_freq.tsv
   touch ${meta.sample_id}.umi_edit_distance.tsv

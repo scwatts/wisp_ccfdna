@@ -13,11 +13,11 @@ process SAMBAMBA_INDEX {
   """
   sambamba index \\
     --nthreads ${task.cpus} \\
-    ${meta.sample_id}.bam
+    ${bam}
   """
 
   stub:
   """
-  touch ${meta.sample_id}.bam.bai
+  touch ${bam}.bai
   """
 }

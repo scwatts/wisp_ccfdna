@@ -1,10 +1,10 @@
 process SAGE_APPEND {
   tag "${meta.id}"
 
-  container 'docker.io/scwatts/sage:4.3.rc1'
+  container 'docker.io/scwatts/sage:3.4'
 
   input:
-  tuple val(meta), path(vcf), path(bam)
+  tuple val(meta), path(vcf), path(bam), path(bai)
   path genome_fasta
   path genome_fai
   path genome_dict

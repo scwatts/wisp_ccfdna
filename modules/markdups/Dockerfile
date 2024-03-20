@@ -9,4 +9,4 @@ RUN \
 
 RUN \
   mkdir -p /opt/markdups/ && \
-  wget -O /opt/markdups/markdups.jar 'https://github.com/hartwigmedical/hmftools/releases/download/mark-dups-v1.1/mark-dups_v1.1.rc1.jar'
+  wget -O /opt/markdups/markdups.jar 'https://github.com/hartwigmedical/hmftools/releases/download/mark-dups-v1.1.2/mark-dups_v1.1.2.jar'

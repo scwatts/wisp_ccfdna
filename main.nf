@@ -15,42 +15,45 @@ workflow {
   )
   ch_inputs = PREPARE_INPUTS.out.inputs
 
-
-  ch_bam = Channel.empty()
+  ch_bams = Channel.empty()
   if (!params.alignment_skip) {
 
     ch_alignment_inputs = ch_inputs.flatMap { meta -> meta['fastq'] }
     ALIGNMENT(
       ch_alignment_inputs,
       file(params.genome_fasta),
+      file(params.genome_fai),
+      file(params.genome_dict),
       file(params.genome_bwa_index),
+      file(params.refdata_unmap_regions),
     )
 
-    ch_bam = ALIGNMENT.out.bam
+    ch_bams = ALIGNMENT.out.bam
 
   } else {
 
-    ch_bam = ch_inputs
+    ch_bams = ch_inputs
       .map { meta ->
         def meta_bam = meta['bam']
-        return [meta_bam, file(meta_bam['bam'])]
+        def bam = file(meta_bam['bam'])
+        def bai = "${bam.toUriString()}.bai"
+        return [meta_bam, bam, bai]
       }
 
   }
 
-
   ch_wisp_inputs = WorkflowMain.groupByMeta(
       ch_inputs.map { meta -> [meta['patient_id'], meta['oncoanalyser']] },
-      ch_bam.map { meta, bam -> [meta['patient_id'], [meta, bam]] },
+      ch_bams.map { meta, bam, bai -> [meta['patient_id'], [meta, bam, bai]] },
   )
-    .map { patient_id, meta_oncoanalyser, meta_bam, bam ->
+    .map { patient_id, meta_oncoanalyser, meta_bam, bam, bai ->
       def meta_wisp = [
         id: "${meta_bam.patient_id}_${meta_bam.sample_id}",
         patient_id: meta_bam.patient_id,
         sample_id: meta_bam.sample_id,
         primary_tumor_id: meta_oncoanalyser.sample_id,
       ]
-      return [meta_wisp, file(meta_oncoanalyser['path']), bam]
+      return [meta_wisp, file(meta_oncoanalyser['path']), bam, bai]
     }
 
   WISP_ANALYSIS(
@@ -58,9 +61,7 @@ workflow {
     file(params.genome_fasta),
     file(params.genome_fai),
     file(params.genome_dict),
-    file(params.refdata_unmap_regions),
     file(params.refdata_gc_profile),
     file(params.refdata_diploid_regions),
   )
-
 }

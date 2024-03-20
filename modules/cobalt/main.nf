@@ -1,10 +1,10 @@
 process COBALT {
   tag "${meta.id}"
 
-  container 'docker.io/scwatts/cobalt:1.16.rc1'
+  container 'docker.io/scwatts/cobalt:1.16'
 
   input:
-  tuple val(meta), path(bam)
+  tuple val(meta), path(bam), path(bai)
   path gc_profile
   path diploid_bed
 
