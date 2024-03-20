@@ -42,12 +42,6 @@ process {
     memory = 30.GB
   }
 
-  withName: 'SAMBAMBA_MERGE' {
-    queue = 'nextflow-task-ondemand-8cpu_32gb-nvme_ssd'
-    cpus = 8
-    memory = 30.GB
-  }
-
   withName: 'SAMBAMBA_INDEX' {
     queue = 'nextflow-task-ondemand-4cpu_16gb-nvme_ssd'
     cpus = 4
