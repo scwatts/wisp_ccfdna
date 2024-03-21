@@ -19,6 +19,7 @@ workflow {
   if (!params.alignment_skip) {
 
     ch_alignment_inputs = ch_inputs.flatMap { meta -> meta['fastq'] }
+
     ALIGNMENT(
       ch_alignment_inputs,
       file(params.genome_fasta),
