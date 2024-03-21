@@ -13,6 +13,9 @@ workflow WISP_ANALYSIS {
     diploid_bed
 
   main:
+
+    // TODO(SW): use minimal meta for COBALT since changing oncoanalyser data should not impact
+
     COBALT(
       ch_inputs.map { meta_wisp, oncoanalyser_dir, bam, bai -> [meta_wisp, bam, bai] },
       gc_profile,
