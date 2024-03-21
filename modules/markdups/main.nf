@@ -1,7 +1,7 @@
 process MARKDUPS {
   tag "${meta.id}"
 
-  container 'docker.io/scwatts/markdups:1.1.2'
+  container 'docker.io/scwatts/markdups:1.1.3'
 
   input:
   tuple val(meta), path(bams), path(bais)
@@ -34,7 +34,7 @@ process MARKDUPS {
       \\
       -unmap_regions ${unmap_regions} \\
       -ref_genome ${genome_fasta} \\
-      -ref_genome_version ${genome_ver} \\
+      -ref_genome_version 38 \\
       \\
       -write_stats \\
       -threads ${task.cpus} \\
