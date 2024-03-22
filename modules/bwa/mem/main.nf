@@ -35,12 +35,12 @@ process BWA_MEM {
     \\
     sambamba sort \\
       --nthreads ${task.cpus} \\
-      --out ${meta.sample_id}.${meta.lane}.${meta.split}.bam \\
+      --out ${meta.sample_id}.${meta.library_id}.${meta.lane}.${meta.split}.bam \\
       /dev/stdin
   """
 
   stub:
   """
-  touch ${meta.sample_id}.${meta.lane}.${meta.split}.bam
+  touch ${meta.sample_id}.${meta.library_id}.${meta.lane}.${meta.split}.bam
   """
 }
